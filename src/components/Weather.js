@@ -1,4 +1,4 @@
-function Weather({ temp, feels_like, humidity, pressure }) {
+function Weather({ temp, feels_like, humidity, pressure, weather, wind }) {
   return (
     <div>
       <div>
@@ -12,6 +12,9 @@ function Weather({ temp, feels_like, humidity, pressure }) {
       </div>
       <div>
         pressure: <span>{pressure}</span>
+      </div>
+      <div>
+        weather: <span>{weather.description}</span>
       </div>
     </div>
   );

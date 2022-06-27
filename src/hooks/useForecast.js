@@ -13,20 +13,26 @@ function useForecast() {
     setLoading(true);
     setError(false);
 
-    const forecastData = await getForecastData(city);
-    const weatherData = await getWeatherData(city);
-    const futureWeather = getDailyForecast(forecastData);
-    const currentWeather = getCurrentWeather(weatherData);
+    try {
+      const forecastData = await getForecastData(city);
+      const currentData = await getWeatherData(city);
+      const futureWeather = getDailyForecast(forecastData);
+      const currentWeather = getCurrentWeather(currentData);
 
-    setForecast({ futureWeather, currentWeather });
+      setForecast({ futureWeather, currentWeather });
 
-    console.log(forecastData);
-    console.log(weatherData);
-    console.log(futureWeather);
-    console.log(currentWeather);
+      console.log(forecastData);
+      console.log(currentData);
+      // console.log(futureWeather);
+      // console.log(currentWeather);
+    } catch (err) {
+      console.log(err);
+      setError("City not found");
+      setLoading(false);
+    }
   }
 
-  const getForecastData = async (city) => {
+  async function getForecastData(city) {
     const res = await fetch(
       "http://api.openweathermap.org/data/2.5/forecast?q=" +
         city +
@@ -34,19 +40,18 @@ function useForecast() {
         KEYS +
         "&units=metric"
     );
-    const data = res.json();
-    console.log(data);
+    const data = await res.json();
 
-    if (data.cod === "404") {
-      setError("City not found");
-      setLoading(false);
-      return;
+    if (data.length === 0 || data.cod === "404") {
+      throw new Error("City not found");
     }
+
     return data;
-  };
+  }
 
   async function getWeatherData(city) {
     const coords = await getCoordsData(city);
+
     const lat = coords[0].lat;
     const lon = coords[0].lon;
 
@@ -60,12 +65,6 @@ function useForecast() {
         "&units=metric"
     );
     const data = res.json();
-
-    if (coords.lenght === 0 || data.cod === "404") {
-      setError("City not found");
-      setLoading(false);
-      return;
-    }
     return data;
   }
 
@@ -78,11 +77,10 @@ function useForecast() {
     );
     const data = await res.json();
 
-    if (data.cod === "404") {
-      setError("City not found");
-      setLoading(false);
-      return;
+    if (data.length === 0) {
+      throw new Error("Error: No coords found");
     }
+
     return data;
   }
 
