@@ -1,7 +1,6 @@
 import { useState } from "react";
-import getCurrentDay from "../helpers/getCurrentDayForecast";
-import getCurrentDayDetails from "../helpers/getCurrentDayDetails";
-// import getUpcomingDays from "../helpers/getUpcomingDaysForecast";
+import getCurrentWeather from "../helpers/getCurrentWeather";
+import { getDailyForecast } from "../helpers/getDailyForecast";
 
 const KEYS = process.env.REACT_APP_NOT_SECRET_CODE;
 
@@ -13,25 +12,21 @@ function useForecast() {
   async function submitRequest(city) {
     setLoading(true);
     setError(false);
+
     const forecastData = await getForecastData(city);
     const weatherData = await getWeatherData(city);
-    console.log(weatherData, forecastData);
-    // gatherForecastData(forecastData);
-    // gatherWeatherData(weatherData);
+    const futureWeather = getDailyForecast(forecastData);
+    const currentWeather = getCurrentWeather(weatherData);
+
+    setForecast({ futureWeather, currentWeather });
+
+    console.log(forecastData);
+    console.log(weatherData);
+    console.log(futureWeather);
+    console.log(currentWeather);
   }
 
-  // function gatherForecastData(data) {
-  //   const upcomingDays = getUpcomingDays(data);
-  //   setForecast({ ...forecast, upcomingDays });
-  // }
-
-  // function gatherWeatherData(data) {
-  //   const currentDay = getCurrentDay(data);
-  //   const currentDayDetails = getCurrentDayDetails(data);
-  //   setForecast({ ...forecast, currentDay, currentDayDetails });
-  // }
-
-  async function getForecastData(city) {
+  const getForecastData = async (city) => {
     const res = await fetch(
       "http://api.openweathermap.org/data/2.5/forecast?q=" +
         city +
@@ -39,18 +34,19 @@ function useForecast() {
         KEYS +
         "&units=metric"
     );
-    const data = await res.json();
+    const data = res.json();
+    console.log(data);
 
     if (data.cod === "404") {
       setError("City not found");
+      setLoading(false);
       return;
     }
     return data;
-  }
+  };
 
   async function getWeatherData(city) {
     const coords = await getCoordsData(city);
-    console.log(coords);
     const lat = coords[0].lat;
     const lon = coords[0].lon;
 
@@ -63,10 +59,11 @@ function useForecast() {
         KEYS +
         "&units=metric"
     );
-    const data = await res.json();
+    const data = res.json();
 
     if (coords.lenght === 0 || data.cod === "404") {
       setError("City not found");
+      setLoading(false);
       return;
     }
     return data;
@@ -83,6 +80,7 @@ function useForecast() {
 
     if (data.cod === "404") {
       setError("City not found");
+      setLoading(false);
       return;
     }
     return data;

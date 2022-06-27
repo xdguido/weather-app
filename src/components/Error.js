@@ -8,7 +8,7 @@ Error.propTypes = {
   message: PropTypes.string,
 };
 Error.defaultProps = {
-  message: "An error ocurred",
+  message: "An error has ocurred",
 };
 
 export default Error;
