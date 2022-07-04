@@ -1,6 +1,6 @@
 import { useState } from "react";
 import getCurrentWeather from "../helpers/getCurrentWeather";
-import { getDailyForecast } from "../helpers/getDailyForecast";
+import getDailyForecast from "../helpers/getDailyForecast";
 
 const KEYS = process.env.REACT_APP_NOT_SECRET_CODE;
 
@@ -20,11 +20,12 @@ function useForecast() {
       const currentWeather = getCurrentWeather(currentData);
 
       setForecast({ futureWeather, currentWeather });
+      setLoading(false);
 
       console.log(forecastData);
       console.log(currentData);
-      // console.log(futureWeather);
-      // console.log(currentWeather);
+      console.log(futureWeather);
+      console.log(currentWeather);
     } catch (err) {
       console.log(err);
       setError("City not found");
@@ -44,6 +45,9 @@ function useForecast() {
 
     if (data.length === 0 || data.cod === "404") {
       throw new Error("City not found");
+    }
+    if (data.cod === "401") {
+      throw new Error("Invalid credentials");
     }
 
     return data;
@@ -78,7 +82,7 @@ function useForecast() {
     const data = await res.json();
 
     if (data.length === 0) {
-      throw new Error("Error: No coords found");
+      throw new Error("No coords found");
     }
 
     return data;

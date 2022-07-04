@@ -1,8 +1,11 @@
-import "./App.css";
 import useForecast from "./hooks/useForecast";
-import Form from "./components/Form";
+
+import { Container, Col, Row } from "react-bootstrap";
+
+import SearchForm from "./components/SearchForm";
 import Error from "./components/Error";
 import Weather from "./components/Weather";
+import Forecast from "./components/Forecast/Forecast";
 
 function App() {
   const { isError, isLoading, forecast, submitRequest } = useForecast();
@@ -13,9 +16,12 @@ function App() {
 
   return (
     <div className="App">
-      <Form submitSearch={onSubmit} />
-      {isError && <Error message={isError} />}
-      {forecast && <Weather {...forecast.currentWeather} />}
+      <Container>
+        <SearchForm submitSearch={onSubmit} isLoading={isLoading} />
+        {isError && <Error message={isError} />}
+        {forecast && <Weather {...forecast.currentWeather} />}
+        {forecast && <Forecast forecast={forecast.futureWeather} />}
+      </Container>
     </div>
   );
 }

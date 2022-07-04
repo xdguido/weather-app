@@ -1,22 +1,29 @@
-function Weather({ temp, feels_like, humidity, pressure, weather, wind }) {
+import { Container, Col, Row } from "react-bootstrap";
+
+function Weather({ temp, weather, feels_like, humidity, pressure, wind }) {
   return (
-    <div>
-      <div>
-        temperature: <span>{temp}</span>
-      </div>
-      <div>
-        <span>feels like: {feels_like}</span>
-      </div>
-      <div>
-        humidity: <span>{humidity}</span>
-      </div>
-      <div>
-        pressure: <span>{pressure}</span>
-      </div>
-      <div>
-        weather: <span>{weather.description}</span>
-      </div>
-    </div>
+    <Container>
+      <Row>
+        <Col>
+          <div>
+            <i className={`wi wi-owm-${weather.id}`}></i>
+            <div>{weather.description}</div>
+            <div>{temp} °C</div>
+          </div>
+        </Col>
+        <Col>
+          <div>
+            <div>Feels like: {feels_like} °C</div>
+            <div>Humidity: {humidity} %</div>
+            <div>Pressure: {pressure} mb</div>
+            <div>
+              Wind: <i className={`wi wi-wind from-${wind.deg}-deg`}></i>
+              {wind.speed} KM/h
+            </div>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
